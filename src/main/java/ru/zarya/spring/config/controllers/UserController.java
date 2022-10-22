@@ -4,64 +4,71 @@ package ru.zarya.spring.config.controllers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.ui.ModelMap;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
-import ru.zarya.spring.config.models.User;
-import ru.zarya.spring.config.service.UserService;
 
-import java.util.List;
+import ru.zarya.spring.config.dao.UserDaoImpl;
+import ru.zarya.spring.config.models.User;
+
+//import javax.validation.Valid;
 
 
 @Controller
-@RequestMapping("/showAll")
+@RequestMapping("/user")
 public class UserController {
-    private final UserService userService;
 
+    private final UserDaoImpl userDaoImpl;
     @Autowired
-    public UserController(UserService userService) {
-        this.userService = userService;
+    public UserController(UserDaoImpl userDaoImpl) {
+        this.userDaoImpl = userDaoImpl;
     }
-
 
     @GetMapping()
-    public String showAll(ModelMap model) {
-        List<User> users = userService.showUser();
-        model.addAttribute("users", users);
-        return "showAll";
+    public String index(Model model) {
+        model.addAttribute("users", userDaoImpl.index());
+        return "user/index";
     }
 
-    @GetMapping("/{id}/info")
-    public String info(@PathVariable("id") int id, ModelMap model) {
-        model.addAttribute("users", userService.getUser(id));
-        return "info";
+    @GetMapping("/{id}")
+    public String show(@PathVariable("id") int id, Model model) {
+        model.addAttribute("user", userDaoImpl.show(id));
+        return "user/show";
     }
-    @GetMapping("/newUser")
-    public String addNewUser(ModelMap model) {
-        model.addAttribute("users", new User());
-        return "newUser";
+
+    @GetMapping("/new")
+    public String newUser(Model model) {
+        model.addAttribute("user", new User());
+        return "user/new";
     }
+
     @PostMapping()
-    private String createUser(@ModelAttribute("users") User user){
-        userService.saveUser(user);
-        return "redirect:/showAll";
-
+    public String create(@ModelAttribute ("user")  User user, BindingResult bindingResult) {
+        if(bindingResult.hasErrors()) {
+            return "user/new";
+        }
+        userDaoImpl.save(user);
+        return "redirect:/user";
     }
+
     @GetMapping("/{id}/edit")
-    public String edit(Model model,@PathVariable("id") int id ) {
-        model.addAttribute("user", userService.getUser(id));
-        return "edit";
+    public String edit(Model model, @PathVariable("id") int id) {
+        model.addAttribute("user", userDaoImpl.show(id));
+        return "/user/edit";
     }
 
     @PatchMapping("/{id}")
-    public String update(@ModelAttribute("user") User user, @PathVariable("id") int id) {
-        userService.updateUser(id, user);
-        return "redirect:/showAll";
+    public String update(@ModelAttribute("user") User user, BindingResult bindingResult, @PathVariable("id") int id) {
+        if(bindingResult.hasErrors()) {
+            return "user/edit";
+        }
+        userDaoImpl.update(id,user);
+        return "redirect:/user";
     }
-    @DeleteMapping("/{id}")
-    public String delete(@PathVariable("id") int id){
-        userService.removeUser(id);
-        return "redirect:/showAll";
 
+    @DeleteMapping("/{id}")
+    public String delete(@PathVariable("id") int id) {
+        userDaoImpl.delete(id);
+        return "redirect:/user";
     }
 
 }

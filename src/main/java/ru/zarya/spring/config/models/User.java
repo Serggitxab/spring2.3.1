@@ -1,49 +1,24 @@
 package ru.zarya.spring.config.models;
-import lombok.Data;
 
-import javax.persistence.*;
-import java.io.Serializable;
+//import javax.validation.constraints.*;
 
-@Entity
-@Table(name = "users")
-@Data
-public class User implements Serializable {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    int id;
-    @Column(name = "name")
-    String name;
-    @Column(name = "lastname")
-    String lastName;
-    @Column(name = "age")
-    int age;
-
-
-}
-/*
-import javax.persistence.*;
-import javax.validation.constraints.*;
-
-@Entity
-@Table(name = "users")
 public class User {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+
     private int id;
 
-    @Column(name = "name")
-    @NotEmpty(message = "Name should not be empty")
-    @Size(min = 2,max = 30,message = "Name is not valid")
+
+  //  @NotEmpty(message = "Name should not be empty")
+  //  @Size(min = 2,max = 30,message = "Name is not valid")
     private String name;
 
-    @Column
-    @Min(value = 0, message = "Age is not correct")
-    @Max(value = 120,message = "Age is not valid")
+
+ //   @Min(value = 0, message = "Age is not correct")
+ //   @Max(value = 120,message = "Age is not valid")
     private int age;
 
-    @Column
-    @NotEmpty(message = "Email should not be empty")
-    @Email(message = "Email is not valid")
+
+ //   @NotEmpty(message = "Email should not be empty")
+ //   @Email(message = "Email is not valid")
     private String email;
 
     public User() {
@@ -87,6 +62,15 @@ public class User {
     public void setName(String name) {
         this.name = name;
     }
+
+    @Override
+    public String toString() {
+        return "User{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", age=" + age +
+                ", email='" + email + '\'' +
+                '}';
+    }
 }
 
- */
